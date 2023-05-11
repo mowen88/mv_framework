@@ -16,12 +16,11 @@ class Gun(pygame.sprite.Sprite):
 
 	def get_angle(self, target):
 		radians = atan2(self.zone.player.hitbox.center[0] - target[0], self.zone.player.hitbox.center[1] - target[1])
-		radians %= 2*pi
+		radians %= 2 * pi
 		self.angle = int(degrees(radians))
 
 	def rotate(self):
-		self.get_angle(pygame.mouse.get_pos())
-		
+
 		if self.angle >= 180: self.image = pygame.transform.rotate(self.flipped_image, self.angle)
 		else: self.image = pygame.transform.rotate(self.original_image, self.angle)
 
@@ -30,7 +29,7 @@ class Gun(pygame.sprite.Sprite):
 		self.rect = self.image.get_rect(center = self.rect.center)
 
 	def update(self, dt):
-	
+		self.get_angle(pygame.mouse.get_pos())
 		self.rotate()
 		self.rect.center = self.zone.player.hitbox.center
 

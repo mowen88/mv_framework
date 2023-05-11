@@ -8,7 +8,6 @@ class Player(Entity):
 
 		self.gravity = 0.2
 		self.fric = -0.1
-		self.max_speed = 10
 		self.acc = pygame.math.Vector2(0,0)
 		self.pos = pygame.math.Vector2(self.rect.center)
 		self.vel = pygame.math.Vector2()
@@ -30,18 +29,25 @@ class Player(Entity):
 	def switch_weapon(self):
 		if ACTIONS['scroll_up']:
 			pass
-	def update(self, dt):
 
-		self.acc.x = 0
-		self.input()
-
+	def physics(self, dt):
+		
 		# x direction
 		self.acc.x += self.vel.x * self.fric
 		self.vel.x += self.acc.x
-		self.pos.x += self.vel.x + (0.5 * self.acc.x) 
+		self.pos.x += self.vel.x + (0.5 * self.acc.x) * dt
 		#self.vel.x = max(-self.max_speed, min(self.vel.x, self.max_speed))
 		self.hitbox.centerx = round(self.pos.x)
 		#self.collisions('x')
 		self.rect.centerx = self.hitbox.centerx
+
+	def update(self, dt):
+		self.acc.x = 0
+		self.input()
+		self.physics(dt)
+
+		
+
+
 		
 		

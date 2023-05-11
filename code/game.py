@@ -10,7 +10,7 @@ class Game:
 
         self.clock = pygame.time.Clock()
         self.dt = 0
-        self.screen = pygame.display.set_mode((RES))#, pygame.FULLSCREEN|pygame.SCALED)
+        self.screen = pygame.display.set_mode((RES), pygame.FULLSCREEN|pygame.SCALED)
         self.running = True
         self.keys = pygame.key.get_pressed()
 
@@ -142,7 +142,7 @@ class Game:
         self.get_events()
         self.update(self.dt)
         self.render(self.screen)
-        self.clock.tick(FPS)/1000
+        self.clock.tick(60)/1000
 
 if __name__ == "__main__":
     game = Game()
