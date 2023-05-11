@@ -7,7 +7,7 @@ class Gun(pygame.sprite.Sprite):
 		super().__init__(groups)
 
 		self.zone = zone
-		self.gun_type = 'purple'
+		self.gun_type = 'green'
 		self.original_image = pygame.image.load(f'../assets/weapons/{self.gun_type}.png').convert_alpha()
 		self.image = self.original_image
 		self.flipped_image = pygame.transform.flip(self.original_image, True, False)
@@ -20,7 +20,6 @@ class Gun(pygame.sprite.Sprite):
 		self.angle = int(degrees(radians))
 
 	def rotate(self):
-
 		if self.angle >= 180: self.image = pygame.transform.rotate(self.flipped_image, self.angle)
 		else: self.image = pygame.transform.rotate(self.original_image, self.angle)
 
@@ -31,6 +30,6 @@ class Gun(pygame.sprite.Sprite):
 	def update(self, dt):
 		self.get_angle(pygame.mouse.get_pos())
 		self.rotate()
-		self.rect.center = self.zone.player.hitbox.center
+		self.rect.center = (self.zone.player.hitbox.centerx, self.zone.player.hitbox.centery - 5)
 
 

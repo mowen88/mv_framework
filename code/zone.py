@@ -2,7 +2,9 @@ import pygame
 from math import atan2, degrees, pi
 from os import walk
 from settings import *
+from pytmx.util_pygame import load_pygame
 from state import State
+from entity import Tile, Entity
 from player import Player
 from weapons import Gun
 
@@ -18,10 +20,21 @@ class Zone(State):
 		self.rendered_sprites = pygame.sprite.Group()
 		self.updated_sprites = pygame.sprite.Group()
 
-		self.player = Player(self.game, self, [self.updated_sprites, self.rendered_sprites], (40, 100), pygame.Surface((40, 40)))
+		self.player = Player(self.game, self, [self.updated_sprites, self.rendered_sprites], (40, 160), pygame.Surface((40, 40)))
 
 		self.create_melee()
+		self.create_map()
 
+	def create_map(self):
+		tmx_data = load_pygame(f'../zones/{self.game.current_zone}.tmx')
+
+		# # add backgrounds
+		# Object(self.game, self, [self.rendered_sprites, Z_LAYERS[1]], (0,0), pygame.image.load('../assets/bg.png').convert_alpha())
+		# Object(self.game, self, [self.rendered_sprites, Z_LAYERS[2]], (0,TILESIZE), pygame.image.load('../zones/0.png').convert_alpha())
+
+		for x, y, surf in tmx_data.get_layer_by_name('blocks').tiles():
+			Tile(self.game, self, [self.rendered_sprites], (x * TILESIZE, y * TILESIZE), surf)
+		
 	def create_melee(self):
 		self.melee_sprite = Gun(self.game, self, [self.updated_sprites, self.rendered_sprites], self.player.hitbox.center)
 
@@ -33,7 +46,7 @@ class Zone(State):
 	
 	def render(self, screen):
 		screen.fill(LIGHT_GREY)
-		self.game.render_text(round(self.melee_sprite.angle, 2), WHITE, self.game.small_font, RES/2)
+		self.game.render_text(round(self.player.vel, 2), WHITE, self.game.small_font, RES/2)
 		self.rendered_sprites.draw(screen)
 
 

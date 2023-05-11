@@ -9,7 +9,6 @@ class Game:
         pygame.init()
 
         self.clock = pygame.time.Clock()
-        self.dt = 0
         self.screen = pygame.display.set_mode((RES), pygame.FULLSCREEN|pygame.SCALED)
         self.running = True
         self.keys = pygame.key.get_pressed()
@@ -22,6 +21,7 @@ class Game:
         # states
         self.stack = []
 
+        self.current_zone = 0
         self.load_states()
 
     def get_events(self):
@@ -139,10 +139,12 @@ class Game:
         pygame.display.flip()
 
     def main_loop(self):
+        dt = (self.clock.tick()/1000) * FPS
         self.get_events()
-        self.update(self.dt)
+
+        self.update(dt)
         self.render(self.screen)
-        self.clock.tick(60)/1000
+        
 
 if __name__ == "__main__":
     game = Game()
