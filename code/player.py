@@ -3,8 +3,8 @@ from settings import *
 from entity import Entity
 
 class Player(Entity):
-	def __init__(self, game, zone, groups, pos, surf):
-		super().__init__(game, zone, groups, pos, surf)
+	def __init__(self, game, zone, groups, pos):
+		super().__init__(game, zone, groups, pos)
 
 		self.game = game
 
@@ -21,11 +21,9 @@ class Player(Entity):
 		self.pos = pygame.math.Vector2(self.rect.center)
 		self.vel = pygame.math.Vector2()
 
-
 		#weapons
 		self.weapon_index = 0
 		self.weapon = None
-
 
 		self.hitbox = self.rect.copy().inflate(0,0)
 
@@ -57,7 +55,7 @@ class Player(Entity):
 		self.pos.x += self.vel.x * dt + (0.5 * self.acc.x) * dt
 		#self.vel.x = max(-self.max_speed, min(self.vel.x, self.max_speed))
 		self.hitbox.centerx = round(self.pos.x)
-		#self.collisions('x')
+		self.collisions('x') 
 		self.rect.centerx = self.hitbox.centerx
 
 		if abs(self.vel.x) < 0.1: self.vel.x = 0
