@@ -7,6 +7,19 @@ HALF_WIDTH, HALF_HEIGHT = RES/2
 
 FONT = '../fonts/Pokemon Classic.ttf'
 
+LAYERS = {
+	'BG0': 0,
+	'BG1': 1,
+	'BG2': 2,
+	'Water': 3,
+	'particles': 4,
+	'NPCs': 5,
+	'player':6,
+	'weapons': 7,
+	'blocks': 8,
+	'explosions': 9
+}
+
 PLAYER_DATA = {
 	'Guns':{'purple', 'green'}
 }

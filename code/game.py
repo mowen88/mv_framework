@@ -9,7 +9,7 @@ class Game:
         pygame.init()
 
         self.clock = pygame.time.Clock()
-        self.screen = pygame.display.set_mode((RES))#, pygame.FULLSCREEN|pygame.SCALED)
+        self.screen = pygame.display.set_mode((RES), pygame.FULLSCREEN|pygame.SCALED)
         self.running = True
         self.keys = pygame.key.get_pressed()
 
@@ -20,7 +20,7 @@ class Game:
 
         # states
         self.stack = []
-
+        self.screenshaking = False
         self.current_zone = 0
         self.load_states()
 
@@ -119,11 +119,11 @@ class Game:
         rect = surf.get_rect(center = pos)
         return(surf, rect)
 
-    def create_sprite(self, path, pos):
-        sprite = pygame.sprite.Sprite()
-        sprite.image = pygame.image.load(path).convert_alpha()
-        sprite.rect = sprite.image.get_rect(center = pos)
-        return sprite
+    # def create_sprite(self, image, pos):
+    #     sprite = pygame.sprite.Sprite()
+    #     sprite.image = image.convert_alpha()
+    #     sprite.rect = sprite.image.get_rect(center = pos)
+    #     return sprite
 
     def render_text(self, text, colour, font, pos):
         surf = font.render(str(text), False, colour)

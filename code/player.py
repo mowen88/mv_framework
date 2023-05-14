@@ -3,8 +3,8 @@ from settings import *
 from entity import Entity
 
 class Player(Entity):
-	def __init__(self, game, zone, groups, pos):
-		super().__init__(game, zone, groups, pos)
+	def __init__(self, game, zone, groups, pos, z):
+		super().__init__(game, zone, groups, pos, z)
 
 		self.game = game
 
@@ -15,17 +15,22 @@ class Player(Entity):
 		self.image = self.animations[self.state][self.frame_index]
 		self.rect = self.image.get_rect(center = pos)
 
-		self.gravity = 0.2
+		self.gravity = 0.3
 		self.fric = -0.2
-		self.acc = pygame.math.Vector2(0,0)
+		self.acc = pygame.math.Vector2(0, self.gravity)
 		self.pos = pygame.math.Vector2(self.rect.center)
 		self.vel = pygame.math.Vector2()
+
+		self.jump_speed = 6
+
+		self.on_ground = False
+		self.on_ceiling = False
 
 		#weapons
 		self.weapon_index = 0
 		self.weapon = None
 
-		self.hitbox = self.rect.copy().inflate(0,0)
+		self.hitbox = self.rect.copy().inflate(-12,-6)
 
 	def import_images(self):
 		char_path = f'../assets/player/'
@@ -38,14 +43,26 @@ class Player(Entity):
 	def input(self):
 		keys = pygame.key.get_pressed()
 
+		if ACTIONS['up']:
+			self.jump(self.jump_speed)
+
+		if ACTIONS['left_click']:
+			self.zone.beam()
+
 		if keys[pygame.K_RIGHT]:
 			self.acc.x += 0.6
 		elif keys[pygame.K_LEFT]:
 			self.acc.x -= 0.6
 
-	def switch_weapon(self):
-		if ACTIONS['scroll_up']:
-			pass
+		self.game.reset_keys()
+
+
+		# if self.cyote_timer < self.cyote_timer_thresh:
+		# 	self.vel.y = -height
+		# 	self.jump_counter = 1
+		# elif self.jump_counter == 1:
+		# 	self.vel.y = -height
+		# 	self.jump_counter = 0
 
 	def physics(self, dt):
 		
@@ -59,6 +76,22 @@ class Player(Entity):
 		self.rect.centerx = self.hitbox.centerx
 
 		if abs(self.vel.x) < 0.1: self.vel.x = 0
+
+		# y direction
+		if not (pygame.key.get_pressed()[pygame.K_UP]) and self.vel.y < 0: self.vel.y += (self.acc.y * 2) * dt
+		else:self.vel.y += self.acc.y * dt
+
+		self.pos.y += self.vel.y * dt + (0.5 * self.acc.y) * dt
+		self.hitbox.centery = round(self.pos.y)
+		self.collisions('y') 
+		self.rect.centery = self.hitbox.centery
+
+		if self.vel.y >= 8: self.vel.y = 8
+		if abs(self.vel.y) >= 0.5: self.on_ground = False
+		
+		if not (pygame.key.get_pressed()[pygame.K_UP]) and self.vel.y < 0:
+			self.gravity += 1
+
 
 	def update(self, dt):
 		self.acc.x = 0
