@@ -75,6 +75,7 @@ class Gun(pygame.sprite.Sprite):
 		#self.angle += 5
 		self.angle = self.angle % 360
 		self.rect = self.image.get_rect(center = self.rect.center)
+	
 
 	def update(self, dt):
 		if self.owner != self.zone.player: self.get_angle(self.rect.center + self.zone.rendered_sprites.offset, self.zone.player.hitbox.center)

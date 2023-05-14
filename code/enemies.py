@@ -12,6 +12,8 @@ class Enemy(Entity):
 		self.rect = self.image.get_rect(center = pos)
 		self.hitbox = self.rect.copy().inflate(-self.rect.width * 0.5, -self.rect.height * 0.2)
 
+		self.vision_box = pygame.Rect(0, 0, 300, 300)
+
 		# physics
 		self.gravity = 0.3
 		self.fric = -0.2
@@ -21,10 +23,9 @@ class Enemy(Entity):
 
 		# weapons
 		self.gun = DATA['enemy_guns'][self.char]
-		print(self.gun)
 
 	def update(self, dt):
+		self.vision_box.center = self.rect.center
 		self.physics_x(dt)
 		self.physics_y(dt)
-
 

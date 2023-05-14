@@ -37,6 +37,7 @@ class Zone(State):
 		# add the player
 		for obj in tmx_data.get_layer_by_name('entities'):
 			if obj.name == 'player': self.player = Player(self.game, self, obj.name, [self.updated_sprites, self.rendered_sprites], (obj.x, obj.y), LAYERS['player'])
+			if obj.name == 'guard': Enemy(self.game, self, obj.name, [self.enemy_sprites, self.updated_sprites, self.rendered_sprites], (obj.x, obj.y), LAYERS['NPCs'])
 			if obj.name == 'sg_guard': Enemy(self.game, self, obj.name, [self.enemy_sprites, self.updated_sprites, self.rendered_sprites], (obj.x, obj.y), LAYERS['NPCs'])
 			self.target = self.player
 			
@@ -51,6 +52,20 @@ class Zone(State):
 				self.gun_sprite = Gun(self.game, self, sprite.gun, sprite, [self.gun_sprites, self.updated_sprites, self.rendered_sprites], sprite.hitbox.center, LAYERS['weapons'])
 			elif hasattr(sprite, 'gun'):
 				Gun(self.game, self, sprite.gun, sprite, [self.gun_sprites, self.updated_sprites, self.rendered_sprites], sprite.hitbox.center, LAYERS['weapons'])
+
+	def los(self, screen):
+		for gun in self.gun_sprites:
+			if gun.owner != self.player:
+				x = self.player.rect.center - self.rendered_sprites.offset
+				y = gun.rect.center - self.rendered_sprites.offset
+				distance = int(self.get_distance(y, x).magnitude()//5)
+				if distance != 0 and distance < 100:
+					for point in self.get_equidistant_points(y, x, distance):
+						pygame.draw.circle(screen, WHITE, point, 2)
+						for sprite in self.block_sprites:
+							if sprite.rect.collidepoint(point + self.rendered_sprites.offset):
+								return
+
 
 	def beam(self):
 		angle = math.atan2(pygame.mouse.get_pos()[1]-self.gun_sprite.rect.centery + self.rendered_sprites.offset[1], pygame.mouse.get_pos()[0]-self.gun_sprite.rect.centerx + self.rendered_sprites.offset[0])
@@ -88,7 +103,5 @@ class Zone(State):
 		screen.fill(LIGHT_GREY)
 		self.rendered_sprites.offset_draw(self.target)
 		self.game.render_text(self.player.on_ground, WHITE, self.game.small_font, RES/2)
-
-		# for point in self.get_equidistant_points(self.player.rect.center, self.guard.rect.center, int(self.get_distance(self.player.rect.center, self.guard.rect.center).magnitude())):
-		# 	pygame.draw.circle(screen, BLUE, point, 10)
+		self.los(screen)
 

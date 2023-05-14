@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<map version="1.10" tiledversion="1.10.1" orientation="orthogonal" renderorder="right-down" width="64" height="36" tilewidth="20" tileheight="20" infinite="0" nextlayerid="3" nextobjectid="12">
+<map version="1.10" tiledversion="1.10.1" orientation="orthogonal" renderorder="right-down" width="64" height="36" tilewidth="20" tileheight="20" infinite="0" nextlayerid="4" nextobjectid="14">
  <editorsettings>
   <export target="0.csv" format="csv"/>
  </editorsettings>
@@ -54,7 +54,7 @@
   <object id="5" name="guard" x="189.641" y="163.642">
    <point/>
   </object>
-  <object id="7" name="guard" x="53.5277" y="42.8222">
+  <object id="7" name="guard" x="42.8222" y="65.7626">
    <point/>
   </object>
   <object id="8" name="sg_guard" x="321.166" y="243.169">
@@ -63,7 +63,7 @@
   <object id="9" name="sg_guard" x="393.046" y="102.467">
    <point/>
   </object>
-  <object id="11" name="sg_guard" x="76.4681" y="47.4102">
+  <object id="11" name="sg_guard" x="38.2341" y="133.055">
    <point/>
   </object>
  </objectgroup>
