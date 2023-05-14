@@ -2,7 +2,7 @@ import pygame
 from settings import *
 from entity import Entity
 
-class Guard(Entity):
+class Enemy(Entity):
 	def __init__(self, game, zone, char, groups, pos, z):
 		super().__init__(game, zone, char, groups, pos)
 

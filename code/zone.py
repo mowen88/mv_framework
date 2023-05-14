@@ -7,7 +7,7 @@ from camera import Camera
 from state import State
 from entity import Tile, Entity
 from player import Player
-from enemies import Guard
+from enemies import Enemy
 from weapons import BeamParticle, BeamBlast, Gun
 
 class Zone(State):
@@ -16,7 +16,6 @@ class Zone(State):
 
 		self.game = game
 
-		self.gun_sprite = pygame.sprite.Group()
 		self.beam_particle =  pygame.sprite.Group()
 
 		# sprite groups
@@ -38,7 +37,7 @@ class Zone(State):
 		# add the player
 		for obj in tmx_data.get_layer_by_name('entities'):
 			if obj.name == 'player': self.player = Player(self.game, self, obj.name, [self.updated_sprites, self.rendered_sprites], (obj.x, obj.y), LAYERS['player'])
-			if obj.name == 'sg_guard': Guard(self.game, self, obj.name, [self.enemy_sprites, self.updated_sprites, self.rendered_sprites], (obj.x, obj.y), LAYERS['NPCs'])
+			if obj.name == 'sg_guard': Enemy(self.game, self, obj.name, [self.enemy_sprites, self.updated_sprites, self.rendered_sprites], (obj.x, obj.y), LAYERS['NPCs'])
 			self.target = self.player
 			
 		self.create_guns()
@@ -48,11 +47,10 @@ class Zone(State):
 			
 	def create_guns(self):
 		for sprite in self.rendered_sprites:
-			if hasattr(sprite, 'gun'):
-				if sprite == self.player:
-					self.gun_sprite = Gun(self.game, self, sprite.gun, sprite, [self.gun_sprites, self.updated_sprites, self.rendered_sprites], sprite.hitbox.center, LAYERS['weapons'])
-				else:
-					Gun(self.game, self, sprite.gun, sprite, [self.gun_sprites, self.updated_sprites, self.rendered_sprites], sprite.hitbox.center, LAYERS['weapons'])
+			if sprite == self.player:
+				self.gun_sprite = Gun(self.game, self, sprite.gun, sprite, [self.gun_sprites, self.updated_sprites, self.rendered_sprites], sprite.hitbox.center, LAYERS['weapons'])
+			elif hasattr(sprite, 'gun'):
+				Gun(self.game, self, sprite.gun, sprite, [self.gun_sprites, self.updated_sprites, self.rendered_sprites], sprite.hitbox.center, LAYERS['weapons'])
 
 	def beam(self):
 		angle = math.atan2(pygame.mouse.get_pos()[1]-self.gun_sprite.rect.centery + self.rendered_sprites.offset[1], pygame.mouse.get_pos()[0]-self.gun_sprite.rect.centerx + self.rendered_sprites.offset[0])

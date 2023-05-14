@@ -40,6 +40,10 @@ class Entity(pygame.sprite.Sprite):
 
 
 	def import_images(self, animation_states):
+
+		# # to make the shotgun and machinegun guard to same sprite...
+		# if self.char == 'sg_guard' or self.char == 'mg_guard': self.char = 'guard'
+
 		char_path = f'../assets/{self.char}/'
 
 		for animation in animation_states.keys():

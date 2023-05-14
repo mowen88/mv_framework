@@ -17,7 +17,8 @@ LAYERS = {
 	'player':6,
 	'weapons': 7,
 	'blocks': 8,
-	'explosions': 9
+	'explosions': 9,
+	'foreground': 10
 }
 
 DATA = {

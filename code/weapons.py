@@ -77,7 +77,8 @@ class Gun(pygame.sprite.Sprite):
 		self.rect = self.image.get_rect(center = self.rect.center)
 
 	def update(self, dt):
-		self.get_angle(self.owner.hitbox.center, pygame.mouse.get_pos())
+		if self.owner != self.zone.player: self.get_angle(self.rect.center + self.zone.rendered_sprites.offset, self.zone.player.hitbox.center)
+		else: self.get_angle(self.rect.center, pygame.mouse.get_pos())
 		self.rotate()
 		self.rect.center = (self.owner.hitbox.centerx, self.owner.hitbox.centery - 5)
 		
