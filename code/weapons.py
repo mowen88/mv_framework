@@ -2,14 +2,14 @@ import pygame
 from math import atan2, degrees, pi
 from settings import *
 from entity import Entity
-
-
-class BeamParticle(Entity):
-	def __init__(self, game, zone, groups, pos, z):
-		super().__init__(game, zone, groups, pos, z)
+ 
+class BeamParticle(pygame.sprite.Sprite):
+	def __init__(self, game, zone, sprite_type, groups, pos, z):
+		super().__init__(groups)
 
 		self.game = game
 		self.zone = zone
+		self.sprite_type = sprite_type
 		self.z = z
 		self.frame_index = 0
 		self.frames = self.game.get_folder_images('../assets/weapons/beam_particle/')
@@ -35,8 +35,8 @@ class BeamParticle(Entity):
 
 
 class BeamBlast(BeamParticle):
-	def __init__(self, game, zone, groups, pos, z):
-		super().__init__(game, zone, groups, pos, z)
+	def __init__(self, game, zone, sprite_type, groups, pos, z):
+		super().__init__(game, zone, sprite_type, groups, pos, z)
 
 		self.image = pygame.image.load('../assets/weapons/beam_blast.png').convert_alpha()
 		self.rect = self.image.get_rect(center = pos)
@@ -44,13 +44,15 @@ class BeamBlast(BeamParticle):
 	def update(self, dt):
 		self.change_alpha(1)
 
-class Gun(Entity):
-	def __init__(self, game, zone, groups, pos, z):
-		super().__init__( game, zone, groups, pos, z)
+class Gun(pygame.sprite.Sprite):
+	def __init__(self, game, zone, gun_type, owner, groups, pos, z):
+		super().__init__(groups)
 
 		self.zone = zone
+		self.gun_type = gun_type
+		self.owner = owner
 		self.z = z
-		self.gun_type = 'green'
+		
 		self.original_image = pygame.image.load(f'../assets/weapons/{self.gun_type}.png').convert_alpha()
 		self.image = self.original_image
 		self.flipped_image = pygame.transform.flip(self.original_image, True, False)
@@ -75,8 +77,9 @@ class Gun(Entity):
 		self.rect = self.image.get_rect(center = self.rect.center)
 
 	def update(self, dt):
-		self.get_angle(self.zone.player.hitbox.center, pygame.mouse.get_pos())
+		self.get_angle(self.owner.hitbox.center, pygame.mouse.get_pos())
 		self.rotate()
-		self.rect.center = (self.zone.player.hitbox.centerx, self.zone.player.hitbox.centery - 5)
+		self.rect.center = (self.owner.hitbox.centerx, self.owner.hitbox.centery - 5)
+		
 
 

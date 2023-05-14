@@ -3,42 +3,30 @@ from settings import *
 from entity import Entity
 
 class Player(Entity):
-	def __init__(self, game, zone, groups, pos, z):
-		super().__init__(game, zone, groups, pos, z)
+	def __init__(self, game, zone, char, groups, pos, z):
+		super().__init__(game, zone, char, groups, pos, z)
 
 		self.game = game
+		self.char = char
 
-		self.import_images()
-		self.state = 'idle'
-		self.frame_index = 0
+		self.data = DATA['abilities']
 
-		self.image = self.animations[self.state][self.frame_index]
-		self.rect = self.image.get_rect(center = pos)
+		# player animation
+		self.import_images(self.animations)
 
-		self.gravity = 0.3
-		self.fric = -0.2
-		self.acc = pygame.math.Vector2(0, self.gravity)
-		self.pos = pygame.math.Vector2(self.rect.center)
-		self.vel = pygame.math.Vector2()
+		# jumping
+		self.jump_speed = 7
+		self.jump_counter = 0
+		self.cyote_timer = 0
+		self.cyote_timer_threshold = 10
 
-		self.jump_speed = 6
-
+		# player collide type
 		self.on_ground = False
 		self.on_ceiling = False
 
-		#weapons
-		self.weapon_index = 0
-		self.weapon = None
-
-		self.hitbox = self.rect.copy().inflate(-12,-6)
-
-	def import_images(self):
-		char_path = f'../assets/player/'
-		self.animations = {'idle':[], 'run':[]}
-
-		for animation in self.animations.keys():
-			full_path = char_path + animation
-			self.animations[animation] = self.game.get_folder_images(full_path)
+		# weapons
+		self.gun_index = 0
+		self.gun = list(DATA['guns'].keys())[self.gun_index]
 
 	def input(self):
 		keys = pygame.key.get_pressed()
@@ -64,41 +52,33 @@ class Player(Entity):
 		# 	self.vel.y = -height
 		# 	self.jump_counter = 0
 
-	def physics(self, dt):
-		
-		# x direction
-		self.acc.x += self.vel.x * self.fric
-		self.vel.x += self.acc.x * dt
-		self.pos.x += self.vel.x * dt + (0.5 * self.acc.x) * dt
-		#self.vel.x = max(-self.max_speed, min(self.vel.x, self.max_speed))
-		self.hitbox.centerx = round(self.pos.x)
-		self.collisions('x') 
-		self.rect.centerx = self.hitbox.centerx
-
-		if abs(self.vel.x) < 0.1: self.vel.x = 0
-
-		# y direction
-		if not (pygame.key.get_pressed()[pygame.K_UP]) and self.vel.y < 0: self.vel.y += (self.acc.y * 2) * dt
-		else:self.vel.y += self.acc.y * dt
-
-		self.pos.y += self.vel.y * dt + (0.5 * self.acc.y) * dt
-		self.hitbox.centery = round(self.pos.y)
-		self.collisions('y') 
-		self.rect.centery = self.hitbox.centery
-
-		if self.vel.y >= 8: self.vel.y = 8
-		if abs(self.vel.y) >= 0.5: self.on_ground = False
-		
+	def jump(self, height):
+		if self.cyote_timer < self.cyote_timer_threshold:
+			self.vel.y = -height
+			self.jump_counter = 1
+		elif self.jump_counter == 1 and self.data['double_jump']:
+			self.vel.y = -height
+			self.jump_counter = 0
+	
+	def handle_jumping(self, dt):
 		if not (pygame.key.get_pressed()[pygame.K_UP]) and self.vel.y < 0:
-			self.gravity += 1
+			self.gravity += self.gravity
 
+		if not self.on_ground: self.cyote_timer += 1 * dt
+		else: self.cyote_timer = 0
+
+		# if falling, this gives the player one jump if they have double jump
+		if self.jump_counter == 0 and self.data['double_jump'] and self.cyote_timer < self.cyote_timer_threshold:
+			self.jump_counter = 1
 
 	def update(self, dt):
 		self.acc.x = 0
 		self.input()
-		self.physics(dt)
+		self.physics_x(dt)
+		self.physics_y(dt)
+		self.handle_jumping(dt)
 		self.set_state()
-		self.animate('loop', dt)
+		self.animate(dt)
 
 
 

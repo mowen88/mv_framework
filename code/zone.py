@@ -16,15 +16,15 @@ class Zone(State):
 
 		self.game = game
 
-		self.gun_sprite = pygame.sprite.GroupSingle()
+		self.gun_sprite = pygame.sprite.Group()
 		self.beam_particle =  pygame.sprite.Group()
 
 		# sprite groups
 		self.rendered_sprites = Camera(self.game, self)
 		self.updated_sprites = pygame.sprite.Group()
 		self.block_sprites = pygame.sprite.Group()
-
-		self.guard = Guard(self.game, self, [self.updated_sprites, self.rendered_sprites], (360, 100), LAYERS['NPCs'])
+		self.enemy_sprites = pygame.sprite.Group()
+		self.gun_sprites = pygame.sprite.Group()
 
 		self.create_map()
 
@@ -36,18 +36,23 @@ class Zone(State):
 		# Object(self.game, self, [self.rendered_sprites, Z_LAYERS[2]], (0,TILESIZE), pygame.image.load('../zones/0.png').convert_alpha())
 
 		# add the player
-		for obj in tmx_data.get_layer_by_name('player'):
-			if obj.name == 'player': self.player = Player(self.game, self, [self.updated_sprites, self.rendered_sprites], (obj.x, obj.y), LAYERS['player'])
+		for obj in tmx_data.get_layer_by_name('entities'):
+			if obj.name == 'player': self.player = Player(self.game, self, obj.name, [self.updated_sprites, self.rendered_sprites], (obj.x, obj.y), LAYERS['player'])
+			if obj.name == 'sg_guard': Guard(self.game, self, obj.name, [self.enemy_sprites, self.updated_sprites, self.rendered_sprites], (obj.x, obj.y), LAYERS['NPCs'])
 			self.target = self.player
-
-		self.create_gun(self.player.hitbox.center, LAYERS['weapons'])
+			
+		self.create_guns()
 
 		for x, y, surf in tmx_data.get_layer_by_name('blocks').tiles():
 			Tile(self.game, self, [self.block_sprites, self.updated_sprites, self.rendered_sprites], (x * TILESIZE, y * TILESIZE), surf)
 			
-
-	def create_gun(self, pos, z):
-		self.gun_sprite = Gun(self.game, self, [self.updated_sprites, self.rendered_sprites], pos, z)
+	def create_guns(self):
+		for sprite in self.rendered_sprites:
+			if hasattr(sprite, 'gun'):
+				if sprite == self.player:
+					self.gun_sprite = Gun(self.game, self, sprite.gun, sprite, [self.gun_sprites, self.updated_sprites, self.rendered_sprites], sprite.hitbox.center, LAYERS['weapons'])
+				else:
+					Gun(self.game, self, sprite.gun, sprite, [self.gun_sprites, self.updated_sprites, self.rendered_sprites], sprite.hitbox.center, LAYERS['weapons'])
 
 	def beam(self):
 		angle = math.atan2(pygame.mouse.get_pos()[1]-self.gun_sprite.rect.centery + self.rendered_sprites.offset[1], pygame.mouse.get_pos()[0]-self.gun_sprite.rect.centerx + self.rendered_sprites.offset[0])
@@ -56,10 +61,10 @@ class Zone(State):
 		distance = ((x, y) - pygame.math.Vector2(self.gun_sprite.rect.center)).magnitude()
 		point_list = self.get_equidistant_points(self.gun_sprite.rect.center, (x, y), int(distance/6))
 		for num, point in enumerate(point_list):
-			if num > 4: BeamParticle(self.game, self, [self.updated_sprites, self.rendered_sprites], point, LAYERS['particles'])
+			if num > 4: BeamParticle(self.game, self, 'railgun', [self.updated_sprites, self.rendered_sprites], point, LAYERS['particles'])
 			for sprite in self.block_sprites:
 				if sprite.rect.collidepoint(point):
-					BeamBlast(self.game, self, [self.updated_sprites, self.rendered_sprites], point, LAYERS['explosions'])
+					BeamBlast(self.game, self, 'beam_blast', [self.updated_sprites, self.rendered_sprites], point, LAYERS['explosions'])
 					return True
 					
 		return(point_list)
