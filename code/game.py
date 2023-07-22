@@ -9,7 +9,7 @@ class Game:
         pygame.init()
 
         self.clock = pygame.time.Clock()
-        self.screen = pygame.display.set_mode((RES))#, pygame.FULLSCREEN|pygame.SCALED)
+        self.screen = pygame.display.set_mode((RES), pygame.FULLSCREEN|pygame.SCALED)
         self.running = True
         self.keys = pygame.key.get_pressed()
 
@@ -114,17 +114,6 @@ class Game:
 
         return surf_list
 
-    def get_image(self, path, pos):
-        surf = pygame.image.load(path).convert_alpha()
-        rect = surf.get_rect(center = pos)
-        return(surf, rect)
-
-    # def create_sprite(self, image, pos):
-    #     sprite = pygame.sprite.Sprite()
-    #     sprite.image = image.convert_alpha()
-    #     sprite.rect = sprite.image.get_rect(center = pos)
-    #     return sprite
-
     def render_text(self, text, colour, font, pos):
         surf = font.render(str(text), False, colour)
         rect = surf.get_rect(center = pos)
@@ -141,11 +130,9 @@ class Game:
     def main_loop(self):
         dt = (self.clock.tick()/1000) * FPS
         self.get_events()
-
         self.update(dt)
         self.render(self.screen)
         
-
 if __name__ == "__main__":
     game = Game()
     while game.running:

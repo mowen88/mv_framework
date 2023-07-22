@@ -30,7 +30,7 @@ class BeamParticle(pygame.sprite.Sprite):
 
 	def update(self, dt):
 		self.animate(dt)
-		self.change_alpha(2)
+		self.change_alpha(8 * dt)
 		self.image = pygame.transform.rotate(self.image, self.angle)
 
 
@@ -42,7 +42,7 @@ class BeamBlast(BeamParticle):
 		self.rect = self.image.get_rect(center = pos)
 
 	def update(self, dt):
-		self.change_alpha(1)
+		self.change_alpha(4 * dt)
 
 class Gun(pygame.sprite.Sprite):
 	def __init__(self, game, zone, gun_type, owner, groups, pos, z):

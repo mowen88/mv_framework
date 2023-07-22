@@ -9,7 +9,6 @@ class Camera(pygame.sprite.Group):
 		self.zone = zone
 		self.offset = pygame.math.Vector2()
 		self.acc = pygame.math.Vector2()
-
 		self.pos = pygame.math.Vector2()
 		self.screenshake_timer = 0
 
@@ -28,8 +27,8 @@ class Camera(pygame.sprite.Group):
 
 		mouse_dist = self.zone.get_distance(pygame.mouse.get_pos(), target.rect.center)/10
 
-		self.offset.x += (target.rect.centerx - self.offset.x - HALF_WIDTH)/50
-		self.offset.y += (target.rect.centery - self.offset.y - HALF_HEIGHT)/50
+		self.offset.x += (target.hitbox.centerx - self.offset.x - HALF_WIDTH)
+		self.offset.y += (target.hitbox.centery - self.offset.y - HALF_HEIGHT)
 		
 	
 		self.screenshake()
